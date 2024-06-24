@@ -1,13 +1,13 @@
 package steamcmd
 
 type appUpdate struct {
-	s         *client
+	s         *Client
 	appID     string
 	validate  bool
 	directory *string
 }
 
-func (s *client) AppUpdate(appID string) *appUpdate {
+func (s *Client) AppUpdate(appID string) *appUpdate {
 	return &appUpdate{
 		s:     s,
 		appID: appID,

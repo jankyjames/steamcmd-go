@@ -15,7 +15,7 @@ var (
 	}()
 )
 
-type client struct {
+type Client struct {
 	steamCmdPath string
 	anon         bool
 	username     string
@@ -23,7 +23,7 @@ type client struct {
 	debug        bool
 }
 
-func (s *client) getArgs() []string {
+func (s *Client) getArgs() []string {
 	args := []string{commandLogin}
 	if s.anon {
 		args = append(args, paramAnonymous)
@@ -36,7 +36,7 @@ func (s *client) getArgs() []string {
 }
 
 // TODO: Interactive stuff. Solve inline first.
-//func (s *client) Interactive() error {
+//func (s *Client) Interactive() error {
 //	command := exec.Command(pathToSteamCMD, s.getArgs()...)
 //
 //	buf := bytes.NewBuffer([]byte{})
@@ -60,7 +60,7 @@ func (s *client) getArgs() []string {
 //	return nil
 //}
 
-func (s *client) cmd(args ...string) *exec.Cmd {
+func (s *Client) cmd(args ...string) *exec.Cmd {
 	if !s.anon {
 		// TODO: Log in with username and password
 		panic("login with username and password not yet implemented")
@@ -78,9 +78,9 @@ func (s *client) cmd(args ...string) *exec.Cmd {
 
 // New uses anonymous by default unless environment variables STEAM_USERNAME and
 // STEAM_PASSWORD are set, or WithUsernameAndPassword is passed in as an option.
-func New(options ...loginOptions) *client {
+func New(options ...loginOptions) *Client {
 	// TODO: By Default check env vars for username and password
-	s := &client{
+	s := &Client{
 		steamCmdPath: pathToSteamCMD,
 		anon:         true,
 	}
@@ -90,12 +90,12 @@ func New(options ...loginOptions) *client {
 	return s
 }
 
-type loginOptions func(*client)
+type loginOptions func(*Client)
 
 // WithUsernameAndPassword sets the username and password used to interact with steamcmd. Without this option you
 // are logged in anonymously.
 func WithUsernameAndPassword(username, password string) loginOptions {
-	return func(s *client) {
+	return func(s *Client) {
 		s.anon = false
 		s.username = username
 		s.password = password
@@ -104,13 +104,13 @@ func WithUsernameAndPassword(username, password string) loginOptions {
 
 // WithSteamCMD overrides the directory in which the library looks for a steamcmd executable
 func WithSteamCMD(path string) loginOptions {
-	return func(s *client) {
+	return func(s *Client) {
 		s.steamCmdPath = path
 	}
 }
 
 func EnableDebug() loginOptions {
-	return func(c *client) {
+	return func(c *Client) {
 		c.debug = true
 	}
 }

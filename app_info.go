@@ -8,11 +8,11 @@ import (
 )
 
 type appInfo struct {
-	s     *client
+	s     *Client
 	appID string
 }
 
-func (s *client) GetAppInfo(appID string) (*RemoteManifest, error) {
+func (s *Client) GetAppInfo(appID string) (*RemoteManifest, error) {
 	return (&appInfo{
 		s:     s,
 		appID: appID,
