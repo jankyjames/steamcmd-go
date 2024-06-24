@@ -20,6 +20,7 @@ type client struct {
 	anon         bool
 	username     string
 	password     string // TODO: Is there a secure way to store this?
+	debug        bool
 }
 
 func (s *client) getArgs() []string {
@@ -67,8 +68,10 @@ func (s *client) cmd(args ...string) *exec.Cmd {
 
 	command := exec.Command(s.steamCmdPath, args...)
 
-	command.Stdout = os.Stdout
-	command.Stderr = os.Stderr
+	if s.debug {
+		command.Stdout = os.Stdout
+		command.Stderr = os.Stderr
+	}
 
 	return command
 }
@@ -103,5 +106,11 @@ func WithUsernameAndPassword(username, password string) loginOptions {
 func WithSteamCMD(path string) loginOptions {
 	return func(s *client) {
 		s.steamCmdPath = path
+	}
+}
+
+func EnableDebug() loginOptions {
+	return func(c *client) {
+		c.debug = true
 	}
 }

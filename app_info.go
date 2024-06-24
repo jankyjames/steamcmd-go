@@ -25,8 +25,13 @@ func (i *appInfo) do() (*RemoteManifest, error) {
 	command := i.s.cmd(args...)
 
 	buf := bytes.NewBuffer([]byte{})
-	multiOut := io.MultiWriter(buf, os.Stdout)
-	command.Stdout = multiOut
+
+	if i.s.debug {
+		multiOut := io.MultiWriter(buf, os.Stdout)
+		command.Stdout = multiOut
+	} else {
+		command.Stdout = buf
+	}
 
 	err := command.Run()
 	if err != nil {
