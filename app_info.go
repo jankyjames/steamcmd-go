@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"time"
 )
 
 type appInfo struct {
@@ -36,6 +37,11 @@ func (i *appInfo) do() (*RemoteManifest, error) {
 	err := command.Run()
 	if err != nil {
 		return nil, err
+	}
+
+	for buf.Len() <= 0 {
+		// Wait for output to be placed in buffer
+		time.Sleep(time.Millisecond * 100)
 	}
 
 	steamJson := SteamResponseToJSON(buf.Bytes())
