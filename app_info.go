@@ -3,6 +3,7 @@ package steamcmd
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"os"
 	"time"
@@ -44,7 +45,11 @@ func (i *appInfo) do() (*RemoteManifest, error) {
 		time.Sleep(time.Millisecond * 100)
 	}
 
-	steamJson := SteamResponseToJSON(buf.Bytes())
+	steamJson, err := SteamResponseToJSON(buf.Bytes())
+	if err != nil {
+		fmt.Printf("\n\n%s\n\n", buf.String())
+		return nil, err
+	}
 	var manifest RemoteManifest
 	err = json.Unmarshal(steamJson, &manifest)
 	if err != nil {

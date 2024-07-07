@@ -2,6 +2,7 @@ package steamcmd
 
 import (
 	"encoding/json"
+	"errors"
 	"strings"
 )
 
@@ -120,11 +121,18 @@ type manifest struct {
 	Download string `json:"download"`
 }
 
-func SteamResponseToJSON(i []byte) []byte {
+var (
+	ErrInvalidResponse = errors.New("invalid response from steamcmd")
+)
+
+func SteamResponseToJSON(i []byte) ([]byte, error) {
 	payload := string(i)
 
 	payloadBegin := strings.Index(payload, "{")
 	payloadEnd := strings.LastIndex(payload, "}")
+	if payloadBegin == -1 || payloadEnd == -1 {
+		return nil, ErrInvalidResponse
+	}
 	payload = payload[payloadBegin : payloadEnd+1]
 
 	payload = strings.ReplaceAll(payload, "\t", "")
@@ -134,5 +142,5 @@ func SteamResponseToJSON(i []byte) []byte {
 	payload = strings.ReplaceAll(payload, "}\n\"", "},\n\"")
 	jsonPayload := strings.ReplaceAll(payload, "\",\n}", "\"\n}")
 
-	return []byte(jsonPayload)
+	return []byte(jsonPayload), nil
 }
